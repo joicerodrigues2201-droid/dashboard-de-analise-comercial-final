@@ -1,0 +1,3120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Executivo BuscaEPI | Analytics Premium</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Cores Principais */
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary: #ec4899;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      
+      /* Cores Neutras */
+      --dark-900: #0f172a;
+      --dark-800: #1e293b;
+      --dark-700: #334155;
+      --gray-600: #475569;
+      --gray-500: #64748b;
+      --gray-400: #94a3b8;
+      --gray-300: #cbd5e1;
+      --gray-200: #e2e8f0;
+      --gray-100: #f1f5f9;
+      --gray-50: #f8fafc;
+      --white: #ffffff;
+      
+      /* Tema Escuro (padrão) */
+      --bg-primary: var(--dark-900);
+      --bg-secondary: var(--dark-800);
+      --bg-tertiary: var(--dark-700);
+      --text-primary: var(--white);
+      --text-secondary: var(--gray-400);
+      --border-color: rgba(255, 255, 255, 0.1);
+      
+      /* Sombras */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      
+      /* Glassmorphism */
+      --glass-bg: rgba(30, 41, 59, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Tema Claro */
+    body.light-theme {
+      --bg-primary: var(--gray-50);
+      --bg-secondary: var(--white);
+      --bg-tertiary: var(--gray-100);
+      --text-primary: var(--dark-900);
+      --text-secondary: var(--gray-600);
+      --border-color: rgba(0, 0, 0, 0.1);
+      
+      /* Glassmorphism Claro */
+      --glass-bg: rgba(255, 255, 255, 0.8);
+      --glass-border: rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-theme {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+    }
+    
+    body.light-theme::before {
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.05), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.05), transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.05), transparent 50%);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.08), transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.08), transparent 50%);
+      animation: gradientShift 15s ease infinite;
+      z-index: -1;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+    
+    .dashboard-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--glass-shadow);
+      animation: slideDown 0.6s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    
+    .header-left h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+    
+    .header-left p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .theme-toggle, .fullscreen-btn, .export-btn, .goals-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      border: none;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      color: var(--text-primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .goals-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+    }
+    
+    .goals-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+    }
+    
+    .theme-toggle:hover, .fullscreen-btn:hover, .export-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .last-update {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* ===== FILTERS ===== */
+    .filters-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: flex-end;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.8s ease-out 0.2s both;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 150px;
+    }
+    
+    .filter-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+    }
+    
+    .filter-input, .filter-select {
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    
+    .filter-input:focus, .filter-select:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    
+    .btn-primary {
+      padding: 0.75rem 2rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.875rem;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn-success:hover {
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+    }
+    
+    /* ===== KPI CARDS ===== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    /* ===== INSIGHTS INTELIGENTES ===== */
+    .insights-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-xl);
+      animation: fadeIn 0.8s ease-out 0.4s both;
+    }
+    
+    .insights-header {
+      margin-bottom: 1.5rem;
+    }
+    
+    .insights-header h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .insights-header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .insight-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+    }
+    
+    .insight-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(4px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    .insight-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .insight-type {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+    
+    .insight-type.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+    
+    .insight-type.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+    }
+    
+    .insight-type.info {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--info);
+    }
+    
+    .insight-type.danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+    
+    .insight-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+    
+    .insight-description {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    
+    .insight-action {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .insight-action:hover {
+      gap: 0.75rem;
+      color: #a5b4fc;
+    }
+    
+    .kpi-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: scaleIn 0.6s ease-out both;
+      animation-delay: calc(var(--index) * 0.1s);
+    }
+    
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .kpi-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .kpi-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+    }
+    
+    .kpi-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);
+    }
+    
+    .kpi-trend {
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .kpi-trend.up {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+    
+    .kpi-trend.down {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+    }
+    
+    .kpi-trend.neutral {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--gray-400);
+    }
+    
+    .kpi-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .kpi-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .kpi-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    
+    /* ===== CHARTS ===== */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .chart-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow-xl);
+      animation: fadeIn 0.8s ease-out both;
+    }
+    
+    .chart-header {
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .chart-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 350px;
+    }
+    
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    
+    /* ===== TABLE ===== */
+    .table-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      overflow-x: auto;
+      box-shadow: var(--shadow-xl);
+      animation: fadeIn 1s ease-out both;
+    }
+    
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .table-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    thead {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+    
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-secondary);
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+    
+    tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    
+    .badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .badge-success {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--success);
+    }
+    
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--warning);
+    }
+    
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--danger);
+    }
+    
+    /* ===== TOP PERFORMERS ===== */
+    .top-performers-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    /* ===== MOTIVATIONAL SECTION COMPACT ===== */
+    .motivational-and-extras {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+      animation: fadeIn 0.8s ease-out both;
+    }
+
+    .motivational-card-compact {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 24px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .motivational-card-compact::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .motivational-card-compact:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+
+    .motivational-icon-compact {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      animation: float 3s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .motivational-quote-compact {
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.5;
+      background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .motivational-author-compact {
+      font-size: 1rem;
+      color: var(--primary-light);
+      font-weight: 600;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sdr-active-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: scaleIn 0.6s ease-out both;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .sdr-active-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .sdr-active-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .sdr-active-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .top-performer-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+      backdrop-filter: blur(20px);
+      border: 2px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      animation: scaleIn 0.8s ease-out both;
+      transition: all 0.4s ease;
+    }
+
+    .top-performer-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .top-performer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700);
+      animation: shimmer 2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    .top-performer-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .trophy-icon {
+      width: 64px;
+      height: 64px;
+      font-size: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .top-performer-info {
+      flex: 1;
+    }
+
+    .top-performer-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .top-performer-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffd700 0%, #fff 50%, #ffd700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+
+    .top-performer-role {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .top-performer-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .performer-stat {
+      text-align: center;
+    }
+
+    .performer-stat-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--white);
+      margin-bottom: 0.25rem;
+    }
+
+    .performer-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    /* ===== LOADING ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-900);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading-content {
+      text-align: center;
+    }
+    
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1rem;
+      }
+      
+      .header {
+        padding: 1.5rem;
+      }
+      
+      .header-left h1 {
+        font-size: 1.75rem;
+      }
+      
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .kpi-value {
+        font-size: 2rem;
+      }
+      
+      .filters-panel {
+        gap: 1rem;
+      }
+      
+      .motivational-and-extras {
+        grid-template-columns: 1fr;
+      }
+      
+      .motivational-quote-compact {
+        font-size: 1.1rem;
+      }
+    }
+    
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">Carregando Dashboard...</div>
+    </div>
+  </div>
+
+  <div class="dashboard-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1>📊 Dashboard Executivo</h1>
+          <p>Análise Comercial e Performance de Vendas - BuscaEPI</p>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" onclick="toggleTheme()">🌙 Tema</button>
+          <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Tela Cheia</button>
+          <button class="goals-btn" onclick="openGoalsModal()">🎯 Metas</button>
+          <button class="export-btn" onclick="exportData()">📥 Exportar</button>
+        </div>
+      </div>
+      <div class="last-update" style="margin-top: 1rem;">
+        <span class="status-dot"></span>
+        <span id="lastUpdate">Última atualização: --</span>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-panel">
+      <div class="filter-group">
+        <label class="filter-label">Data Início</label>
+        <input type="date" class="filter-input" id="startDate">
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Data Fim</label>
+        <input type="date" class="filter-input" id="endDate">
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Vendedor</label>
+        <select class="filter-select" id="sellerFilter">
+          <option value="todos">Todos os vendedores</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Funil</label>
+        <select class="filter-select" id="funnelFilter">
+          <option value="todos">Todos os funis</option>
+          <option value="inbound">Inbound</option>
+          <option value="outbound">Outbound</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">SDR</label>
+        <select class="filter-select" id="sdrFilter">
+          <option value="todos">Todos os SDRs</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="applyFilters">🔍 Aplicar Filtros</button>
+      <button class="btn-primary btn-success" id="refreshData">🔄 Atualizar Dados</button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- Motivational Quote + Extra Space -->
+    <div class="motivational-and-extras">
+      <div class="motivational-card-compact">
+        <div class="motivational-icon-compact">🚀</div>
+        <h2 class="motivational-quote-compact">
+          "O sucesso não é o final, o fracasso não é fatal: é a coragem de continuar que conta."
+        </h2>
+        <p class="motivational-author-compact">— Winston Churchill</p>
+      </div>
+      <div class="sdr-active-card" id="sdrActiveCard">
+        <!-- This will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Top Performers -->
+    <div class="top-performers-section" id="topPerformersContainer"></div>
+
+    <!-- Insights Inteligentes -->
+    <div class="insights-section">
+      <div class="insights-header">
+        <h2>🧠 Insights Inteligentes</h2>
+        <p>Análise automatizada com recomendações baseadas em IA</p>
+      </div>
+      <div class="insights-grid" id="insightsGrid"></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">📊 Funil de Conversão</h3>
+          <p class="chart-subtitle">Pipeline completo de vendas</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartFunnel"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">🎯 Performance por Funil</h3>
+          <p class="chart-subtitle">Inbound vs Outbound</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartByFunnel"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">🎤 Performance por SDR</h3>
+          <p class="chart-subtitle">Leads e conversões</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartSDR"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">💰 MRR por Vendedor</h3>
+          <p class="chart-subtitle">Receita Recorrente Mensal</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartMRR"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card full-width">
+        <div class="chart-header">
+          <h3 class="chart-title">📊 Meta vs. Realizado por Vendedor</h3>
+          <p class="chart-subtitle">Acompanhamento do MRR realizado em relação às metas individuais</p>
+        </div>
+        <div class="chart-container" style="height: 400px;">
+          <canvas id="chartGoalProgress"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card full-width">
+        <div class="chart-header">
+          <h3 class="chart-title">📈 Evolução Temporal</h3>
+          <p class="chart-subtitle">Performance ao longo do período</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartEvolution"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card full-width">
+        <div class="chart-header">
+          <h3 class="chart-title">📊 Comparativo Mês a Mês - KPIs Principais</h3>
+          <p class="chart-subtitle">Evolução mensal de desempenho e crescimento</p>
+        </div>
+        <div class="chart-container" style="height: 500px;">
+          <canvas id="chartMonthlyComparison"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <div class="table-header">
+        <h2 class="table-title">📋 Performance Detalhada</h2>
+      </div>
+      <table id="performanceTable">
+        <thead>
+          <tr>
+            <th>SDR</th>
+            <th>Vendedor</th>
+            <th>Funil</th>
+            <th>Leads</th>
+            <th>Qualificados</th>
+            <th>Taxa Qualif.</th>
+            <th>Reuniões</th>
+            <th>Propostas</th>
+            <th>Vendas</th>
+            <th>Taxa Conv.</th>
+            <th>MRR</th>
+            <th>Performance</th>
+          </tr>
+        </thead>
+        <tbody id="performanceTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    
+    
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwRvsbgB448SerCRDbBKALUEkYe5XgFfeEURCeEnVUrnBA4O7A8maWHzIsztV-I1x1N/exec';
+    
+    
+    // Metas (salvas no navegador)
+    let goalsData = { company: 0, sellers: {} };
+    let charts = {};
+    let allData = [];
+    
+    function loadGoals() {
+      const saved = localStorage.getItem('buscaepi_goals');
+      if (saved) {
+        try {
+          goalsData = JSON.parse(saved);
+          console.log('✅ Metas carregadas');
+        } catch(e) {
+          console.error('❌ Erro ao carregar metas:', e);
+        }
+      }
+    }
+    
+    function saveGoals() {
+      localStorage.setItem('buscaepi_goals', JSON.stringify(goalsData));
+      console.log('✅ Metas salvas');
+    }
+    
+    loadGoals();
+    
+    // BUSCAR DADOS DO GOOGLE SHEETS
+    async function fetchData() {
+      try {
+        console.log('🔄 Buscando dados...');
+        
+        if (API_URL === 'COLE_SUA_URL_DO_APPS_SCRIPT_AQUI') {
+          alert('⚠️ CONFIGURAÇÃO NECESSÁRIA\n\nVocê precisa colar a URL do Apps Script no arquivo!\n\n1. Abra este arquivo HTML no Bloco de Notas\n2. Procure por: COLE_SUA_URL_DO_APPS_SCRIPT_AQUI\n3. Substitua pela URL que você copiou\n4. Salve e recarregue esta página');
+          return [];
+        }
+        
+        const cacheBuster = '?t=' + new Date().getTime();
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        
+        const res = await fetch(API_URL + cacheBuster, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
+        const json = await res.json();
+        console.log('📦 Resposta recebida:', json);
+        
+        if (!json.success) throw new Error(json.error || 'Erro no servidor');
+        
+        const allData = [];
+        
+        // Processar INBOUND
+        if (json.inbound && Array.isArray(json.inbound)) {
+          console.log(`📥 Inbound: ${json.inbound.length} registros`);
+          json.inbound.forEach(r => {
+            allData.push({
+              date: String(r.data || ''),
+              sdr: String(r.SDR || '').trim(),
+              seller: String(r.vendedor || '').trim(),
+              funnel: 'Inbound',
+              leads: Number(r.leads || 0),
+              qualified: Number(r.qualificados || 0),
+              meetingsSet: Number(r.reun_agendadas || 0),
+              meetingsDone: Number(r.reun_realizadas || 0),
+              proposals: Number(r.propostas || 0),
+              sales: Number(r.vendas || 0),
+              mrr: Number(r.mrr || 0)
+            });
+          });
+        }
+        
+        // Processar OUTBOUND
+        if (json.outbound && Array.isArray(json.outbound)) {
+          console.log(`📤 Outbound: ${json.outbound.length} registros`);
+          json.outbound.forEach(r => {
+            allData.push({
+              date: String(r.data || ''),
+              sdr: String(r.SDR || '').trim(),
+              seller: String(r.vendedor || '').trim(),
+              funnel: 'Outbound',
+              leads: Number(r.leads || 0),
+              qualified: Number(r.qualificados || 0),
+              meetingsSet: Number(r.reun_agendadas || 0),
+              meetingsDone: Number(r.reun_realizadas || 0),
+              proposals: Number(r.propostas || 0),
+              sales: Number(r.vendas || 0),
+              mrr: Number(r.mrr || 0)
+            });
+          });
+        }
+        
+        console.log(`🎉 Total: ${allData.length} registros`);
+        
+        if (allData.length === 0) {
+          alert('⚠️ Nenhum dado encontrado!\n\nVerifique:\n• As abas "inbound" e "outbound" existem?\n• Elas têm dados?');
+        }
+        
+        return allData;
+        
+      } catch(error) {
+        console.error('❌ Erro:', error);
+        
+        if (error.name === 'AbortError') {
+          alert('⏱️ Timeout: Demorou mais de 15 segundos.');
+        } else {
+          alert(`❌ Erro ao carregar:\n\n${error.message}\n\nAbra o Console (F12) para mais detalhes.`);
+        }
+        
+        return [];
+      }
+    }
+    
+    // UTILITY FUNCTIONS
+    const sum = (arr, field) => arr.reduce((a, b) => a + (b[field] || 0), 0);
+    const rate = (n, d) => !d ? 0 : ((n / d) * 100).toFixed(1);
+    const groupBy = (arr, key) => arr.reduce((acc, item) => {
+      const group = typeof key === 'function' ? key(item) : item[key];
+      if (!acc[group]) acc[group] = [];
+      acc[group].push(item);
+      return acc;
+    }, {});
+    
+    // FILTER DATA
+    function filterData(data) {
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      const seller = document.getElementById('sellerFilter').value;
+      const funnel = document.getElementById('funnelFilter').value;
+      const sdr = document.getElementById('sdrFilter').value;
+      
+      console.log('Filtros aplicados:', { start, end, seller, funnel, sdr });
+      
+      return data.filter(r => {
+        // Filtro de vendedor
+        if (seller !== 'todos' && r.seller.toLowerCase() !== seller.toLowerCase()) {
+          return false;
+        }
+        
+        // Filtro de funil
+        if (funnel !== 'todos' && r.funnel.toLowerCase() !== funnel.toLowerCase()) {
+          return false;
+        }
+        
+        // Filtro de SDR
+        if (sdr !== 'todos' && r.sdr !== sdr) {
+          return false;
+        }
+        
+        // Filtro de data - normalizar antes de comparar
+        if (start || end) {
+          // Tentar extrair data válida do registro
+          let recordDate = null;
+          
+          // Remover nomes de dias da semana
+          let dateStr = r.date.trim();
+          const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+          dayNames.forEach(day => {
+            if (dateStr.startsWith(day)) {
+              dateStr = dateStr.substring(day.length).trim();
+            }
+          });
+          
+          // Tentar parse direto
+          try {
+            const parsed = new Date(r.date);
+            if (!isNaN(parsed.getTime())) {
+              recordDate = parsed;
+            }
+          } catch (e) {}
+          
+          // Se não conseguiu, tentar formatos específicos
+          if (!recordDate) {
+            // DD/MM/YYYY
+            const ddmmyyyyMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (ddmmyyyyMatch) {
+              const [_, day, month, year] = ddmmyyyyMatch;
+              recordDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            }
+            
+            // YYYY-MM-DD
+            const yyyymmddMatch = dateStr.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (yyyymmddMatch && !recordDate) {
+              const [_, year, month, day] = yyyymmddMatch;
+              recordDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            }
+            
+            // DD-MM-YYYY
+            const ddmmyyyyDashMatch = dateStr.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+            if (ddmmyyyyDashMatch && !recordDate) {
+              const [_, day, month, year] = ddmmyyyyDashMatch;
+              recordDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            }
+          }
+          
+          // Se conseguiu parsear a data do registro, comparar
+          if (recordDate && !isNaN(recordDate.getTime())) {
+            // Converter filtros para Date objects
+            const startDate = start ? new Date(start) : null;
+            const endDate = end ? new Date(end) : null;
+            
+            // Comparar apenas as datas (ignorar hora)
+            if (startDate) {
+              startDate.setHours(0, 0, 0, 0);
+              recordDate.setHours(0, 0, 0, 0);
+              if (recordDate < startDate) {
+                console.log('Registro filtrado (antes da data inicial):', r.date);
+                return false;
+              }
+            }
+            
+            if (endDate) {
+              endDate.setHours(23, 59, 59, 999);
+              const recordDateCopy = new Date(recordDate);
+              recordDateCopy.setHours(23, 59, 59, 999);
+              if (recordDateCopy > endDate) {
+                console.log('Registro filtrado (depois da data final):', r.date);
+                return false;
+              }
+            }
+          } else {
+            console.warn('Não foi possível parsear data para filtro:', r.date);
+            // Se não conseguiu parsear, manter o registro (não filtrar)
+          }
+        }
+        
+        return true;
+      });
+    }
+    
+    // CREATE KPIs
+    function createKPIs(data) {
+      const container = document.getElementById('kpiGrid');
+      container.innerHTML = '';
+      
+      const leads = sum(data, 'leads');
+      const qualified = sum(data, 'qualified');
+      const meetingsSet = sum(data, 'meetingsSet');
+      const meetingsDone = sum(data, 'meetingsDone');
+      const proposals = sum(data, 'proposals');
+      const sales = sum(data, 'sales');
+      const mrr = sum(data, 'mrr');
+      const sdrCount = [...new Set(data.filter(r => r.sdr).map(r => r.sdr))].length;
+      
+      const noShow = meetingsSet - meetingsDone;
+      const noShowRate = rate(noShow, meetingsSet);
+      const qualRate = rate(qualified, leads);
+      const convRate = rate(sales, proposals);
+      
+      const kpis = [
+        { icon: '🎯', label: 'Total de Leads', value: leads.toLocaleString('pt-BR'), subtitle: `${qualRate}% qualificados`, trend: 'up', trendText: '+12%', index: 0 },
+        { icon: '✅', label: 'Qualificados', value: qualified.toLocaleString('pt-BR'), subtitle: `De ${leads} leads`, trend: 'up', trendText: '+15%', index: 1 },
+        { icon: '📅', label: 'Reuniões Agendadas', value: meetingsSet.toLocaleString('pt-BR'), subtitle: `${rate(meetingsDone, meetingsSet)}% comparecimento`, trend: 'up', trendText: '+10%', index: 2 },
+        { icon: '🤝', label: 'Reuniões Realizadas', value: meetingsDone.toLocaleString('pt-BR'), subtitle: `${rate(meetingsDone, meetingsSet)}% comparecimento`, trend: 'up', trendText: '+8%', index: 3 },
+        { icon: '⚠️', label: 'No-Show', value: noShow.toLocaleString('pt-BR'), subtitle: `${noShowRate}% de ausências`, trend: parseFloat(noShowRate) > 30 ? 'danger' : parseFloat(noShowRate) > 15 ? 'warning' : 'success', trendText: `${noShowRate}%`, index: 4 },
+        { icon: '📄', label: 'Propostas Enviadas', value: proposals.toLocaleString('pt-BR'), subtitle: `${rate(proposals, meetingsDone)}% das reuniões`, trend: 'neutral', trendText: '0%', index: 5 },
+        { icon: '💰', label: 'Vendas Fechadas', value: sales.toLocaleString('pt-BR'), subtitle: `${convRate}% de conversão`, trend: 'up', trendText: '+20%', index: 6 },
+        { icon: '📊', label: 'MRR Total', value: `R$ ${mrr.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, subtitle: `R$ ${(mrr/sales || 0).toFixed(0)} por venda`, trend: 'up', trendText: '+25%', index: 7 }
+      ];
+      
+      kpis.forEach(kpi => {
+        const card = document.createElement('div');
+        card.className = 'kpi-card';
+        card.style.setProperty('--index', kpi.index);
+        
+        let trendClass = kpi.trend;
+        if (kpi.trend === 'danger') trendClass = 'down';
+        if (kpi.trend === 'warning') trendClass = 'neutral';
+        if (kpi.trend === 'success') trendClass = 'up';
+        
+        card.innerHTML = `
+          <div class="kpi-header">
+            <div class="kpi-icon">${kpi.icon}</div>
+            <div class="kpi-trend ${trendClass}">
+              ${trendClass === 'up' ? '↗' : trendClass === 'down' ? '↘' : '→'} ${kpi.trendText}
+            </div>
+          </div>
+          <div class="kpi-label">${kpi.label}</div>
+          <div class="kpi-value">${kpi.value}</div>
+          <div class="kpi-subtitle">${kpi.subtitle}</div>
+        `;
+        container.appendChild(card);
+      });
+      
+      // Create SDR Active card separately
+      const sdrContainer = document.getElementById('sdrActiveCard');
+      sdrContainer.innerHTML = `
+        <div class="kpi-header">
+          <div class="kpi-icon">🎤</div>
+          <div class="kpi-trend up">
+            ↗ Ativo
+          </div>
+        </div>
+        <div class="kpi-label">SDRs Ativos</div>
+        <div class="kpi-value">${sdrCount}</div>
+        <div class="kpi-subtitle">Equipe de prospecção</div>
+      `;
+    }
+    
+    // CREATE TOP PERFORMERS
+    function createTopPerformers(data) {
+      const container = document.getElementById('topPerformersContainer');
+      container.innerHTML = '';
+      
+      // Calculate performance by SDR
+      const sdrPerformance = {};
+      const sellerPerformance = {};
+      
+      data.forEach(row => {
+        // SDR Performance
+        if (row.sdr) {
+          if (!sdrPerformance[row.sdr]) {
+            sdrPerformance[row.sdr] = {
+              name: row.sdr,
+              leads: 0,
+              qualified: 0,
+              meetingsSet: 0,
+              sales: 0
+            };
+          }
+          sdrPerformance[row.sdr].leads += row.leads;
+          sdrPerformance[row.sdr].qualified += row.qualified;
+          sdrPerformance[row.sdr].meetingsSet += row.meetingsSet;
+        }
+        
+        // Seller Performance
+        if (row.seller) {
+          if (!sellerPerformance[row.seller]) {
+            sellerPerformance[row.seller] = {
+              name: row.seller,
+              meetingsDone: 0,
+              proposals: 0,
+              sales: 0,
+              mrr: 0
+            };
+          }
+          sellerPerformance[row.seller].meetingsDone += row.meetingsDone;
+          sellerPerformance[row.seller].proposals += row.proposals;
+          sellerPerformance[row.seller].sales += row.sales;
+          sellerPerformance[row.seller].mrr += row.mrr;
+        }
+      });
+      
+      // Find top SDR (by qualified leads)
+      const topSDR = Object.values(sdrPerformance).sort((a, b) => b.qualified - a.qualified)[0];
+      
+      // Find top Seller (by MRR)
+      const topSeller = Object.values(sellerPerformance).sort((a, b) => b.mrr - a.mrr)[0];
+      
+      if (topSDR) {
+        const qualRate = rate(topSDR.qualified, topSDR.leads);
+        const sdrCard = document.createElement('div');
+        sdrCard.className = 'top-performer-card';
+        sdrCard.innerHTML = `
+          <div class="top-performer-header">
+            <div class="trophy-icon">🏆</div>
+            <div class="top-performer-info">
+              <div class="top-performer-label">Top Performer SDR</div>
+              <div class="top-performer-name">${topSDR.name}</div>
+              <div class="top-performer-role">Especialista em Prospecção</div>
+            </div>
+          </div>
+          <div class="top-performer-stats">
+            <div class="performer-stat">
+              <div class="performer-stat-value">${topSDR.leads}</div>
+              <div class="performer-stat-label">Leads Gerados</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">${topSDR.qualified}</div>
+              <div class="performer-stat-label">Qualificados</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">${qualRate}%</div>
+              <div class="performer-stat-label">Taxa Qualificação</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">${topSDR.meetingsSet}</div>
+              <div class="performer-stat-label">Reuniões Agendadas</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(sdrCard);
+      }
+      
+      if (topSeller) {
+        const convRate = rate(topSeller.sales, topSeller.proposals);
+        const avgTicket = topSeller.sales > 0 ? topSeller.mrr / topSeller.sales : 0;
+        const sellerCard = document.createElement('div');
+        sellerCard.className = 'top-performer-card';
+        sellerCard.innerHTML = `
+          <div class="top-performer-header">
+            <div class="trophy-icon">🥇</div>
+            <div class="top-performer-info">
+              <div class="top-performer-label">Top Performer Vendedor</div>
+              <div class="top-performer-name">${topSeller.name}</div>
+              <div class="top-performer-role">Especialista em Fechamento</div>
+            </div>
+          </div>
+          <div class="top-performer-stats">
+            <div class="performer-stat">
+              <div class="performer-stat-value">${topSeller.sales}</div>
+              <div class="performer-stat-label">Vendas Fechadas</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">R$ ${topSeller.mrr.toLocaleString('pt-BR')}</div>
+              <div class="performer-stat-label">MRR Total</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">${convRate}%</div>
+              <div class="performer-stat-label">Taxa Conversão</div>
+            </div>
+            <div class="performer-stat">
+              <div class="performer-stat-value">R$ ${avgTicket.toLocaleString('pt-BR', {maximumFractionDigits: 0})}</div>
+              <div class="performer-stat-label">Ticket Médio</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(sellerCard);
+      }
+    }
+    
+    // CREATE INSIGHTS INTELIGENTES
+    function createInsights(data) {
+      const container = document.getElementById('insightsGrid');
+      container.innerHTML = '';
+      
+      const insights = [];
+      
+      const leads = sum(data, 'leads');
+      const qualified = sum(data, 'qualified');
+      const meetingsSet = sum(data, 'meetingsSet');
+      const meetingsDone = sum(data, 'meetingsDone');
+      const proposals = sum(data, 'proposals');
+      const sales = sum(data, 'sales');
+      const mrr = sum(data, 'mrr');
+      
+      // Insight de Metas
+      if (goalsData.company > 0) {
+        const percentage = Math.round((mrr / goalsData.company) * 100);
+        const remaining = goalsData.company - mrr;
+        
+        if (percentage >= 100) {
+          insights.push({
+            icon: '🎉',
+            type: 'success',
+            title: 'Meta Batida!',
+            description: `${percentage}% da meta (R$ ${mrr.toLocaleString('pt-BR')} de R$ ${goalsData.company.toLocaleString('pt-BR')})`,
+            action: 'Ver detalhes →'
+          });
+        } else if (percentage >= 70) {
+          insights.push({
+            icon: '⚡',
+            type: 'warning',
+            title: 'Próximo da Meta!',
+            description: `${percentage}% atingido. Faltam R$ ${remaining.toLocaleString('pt-BR')}`,
+            action: 'Ver oportunidades →'
+          });
+        } else {
+          insights.push({
+            icon: '⚠️',
+            type: 'danger',
+            title: 'Atenção à Meta!',
+            description: `Apenas ${percentage}% da meta. Faltam R$ ${remaining.toLocaleString('pt-BR')}`,
+            action: 'Plano de ação →'
+          });
+        }
+      }
+      
+      const qualRate = parseFloat(rate(qualified, leads));
+      const noShowRate = parseFloat(rate(meetingsSet - meetingsDone, meetingsSet));
+      const propRate = parseFloat(rate(proposals, meetingsDone));
+      const convRate = parseFloat(rate(sales, proposals));
+      
+      // Insight 1: Taxa de Qualificação
+      if (qualRate < 25) {
+        insights.push({
+          icon: '⚠️',
+          type: 'warning',
+          title: 'Taxa de Qualificação Abaixo do Ideal',
+          description: `Apenas ${qualRate.toFixed(1)}% dos leads estão sendo qualificados. O ideal é acima de 30%. Revise seus critérios de qualificação e treinamento da equipe SDR.`,
+          action: 'Ver estratégias →'
+        });
+      } else if (qualRate > 40) {
+        insights.push({
+          icon: '✨',
+          type: 'success',
+          title: 'Excelente Qualificação de Leads!',
+          description: `Taxa de qualificação de ${qualRate.toFixed(1)}% está acima da média do mercado (30%). Continue investindo nas estratégias atuais de prospecção.`,
+          action: 'Manter estratégia →'
+        });
+      }
+      
+      // Insight 2: No-Show
+      if (noShowRate > 25) {
+        insights.push({
+          icon: '🚨',
+          type: 'danger',
+          title: 'Alto Índice de No-Show Detectado',
+          description: `${noShowRate.toFixed(1)}% das reuniões agendadas não são realizadas. Implemente confirmações automáticas 24h antes e use lembretes por WhatsApp.`,
+          action: 'Ver soluções →'
+        });
+      } else if (noShowRate < 15) {
+        insights.push({
+          icon: '🎯',
+          type: 'success',
+          title: 'Baixíssimo No-Show!',
+          description: `Apenas ${noShowRate.toFixed(1)}% de ausências em reuniões. Seu processo de confirmação está funcionando perfeitamente. Parabéns!`,
+          action: 'Compartilhar práticas →'
+        });
+      }
+      
+      // Insight 3: Conversão de Propostas
+      if (convRate < 20 && proposals > 0) {
+        insights.push({
+          icon: '📉',
+          type: 'warning',
+          title: 'Conversão de Propostas Precisa Melhorar',
+          description: `Taxa de fechamento de ${convRate.toFixed(1)}% está abaixo do esperado (25-35%). Revise a qualidade das propostas e treinamento de objeções.`,
+          action: 'Analisar propostas →'
+        });
+      } else if (convRate > 35 && proposals > 0) {
+        insights.push({
+          icon: '💎',
+          type: 'success',
+          title: 'Conversão Excepcional!',
+          description: `${convRate.toFixed(1)}% de conversão em propostas enviadas. Performance acima da média! Documente o processo para replicar o sucesso.`,
+          action: 'Documentar processo →'
+        });
+      }
+      
+      // Insight 4: Análise por Funil
+      const byFunnel = groupBy(data, 'funnel');
+      if (byFunnel.inbound && byFunnel.outbound) {
+        const inboundConv = rate(sum(byFunnel.inbound, 'sales'), sum(byFunnel.inbound, 'leads'));
+        const outboundConv = rate(sum(byFunnel.outbound, 'sales'), sum(byFunnel.outbound, 'leads'));
+        
+        if (parseFloat(inboundConv) > parseFloat(outboundConv) * 1.5) {
+          insights.push({
+            icon: '📊',
+            type: 'info',
+            title: 'Inbound Performando Melhor',
+            description: `Leads Inbound convertem ${(parseFloat(inboundConv) / parseFloat(outboundConv)).toFixed(1)}x mais que Outbound. Considere investir mais em marketing de conteúdo e SEO.`,
+            action: 'Ver detalhes →'
+          });
+        } else if (parseFloat(outboundConv) > parseFloat(inboundConv) * 1.5) {
+          insights.push({
+            icon: '🎯',
+            type: 'info',
+            title: 'Outbound com Melhor ROI',
+            description: `Prospecção Outbound está ${(parseFloat(outboundConv) / parseFloat(inboundConv)).toFixed(1)}x mais eficiente. Aumente a equipe SDR e otimize as listas de prospecção.`,
+            action: 'Expandir outbound →'
+          });
+        }
+      }
+      
+      // Insight 5: Performance de Reuniões
+      if (propRate < 40 && meetingsDone > 0) {
+        insights.push({
+          icon: '🎭',
+          type: 'warning',
+          title: 'Poucas Propostas Após Reuniões',
+          description: `Apenas ${propRate.toFixed(1)}% das reuniões geram proposta. Melhore a qualificação pré-reunião e treine pitch de vendas para aumentar para 60%+.`,
+          action: 'Treinar equipe →'
+        });
+      }
+      
+      // Insight 6: MRR Médio
+      const avgMRR = mrr / sales;
+      if (avgMRR > 0 && avgMRR < 500) {
+        insights.push({
+          icon: '💰',
+          type: 'info',
+          title: 'Oportunidade de Upsell',
+          description: `Ticket médio de R$ ${avgMRR.toFixed(0)} por venda. Considere implementar pacotes premium ou vendas adicionais para aumentar o MRR por cliente.`,
+          action: 'Criar pacotes →'
+        });
+      }
+      
+      // Se não houver insights, mostrar mensagem positiva
+      if (insights.length === 0) {
+        insights.push({
+          icon: '🌟',
+          type: 'success',
+          title: 'Performance Balanceada!',
+          description: 'Todos os indicadores estão dentro da faixa esperada. Continue monitorando as métricas e otimizando processos continuamente.',
+          action: 'Ver tendências →'
+        });
+      }
+      
+      // Renderizar insights
+      insights.forEach(insight => {
+        const card = document.createElement('div');
+        card.className = 'insight-card';
+        card.innerHTML = `
+          <div class="insight-icon">${insight.icon}</div>
+          <span class="insight-type ${insight.type}">${insight.type}</span>
+          <h4 class="insight-title">${insight.title}</h4>
+          <p class="insight-description">${insight.description}</p>
+          <div class="insight-action">${insight.action}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+    
+    // CREATE CHARTS
+    function createCharts(data) {
+      const leads = sum(data, 'leads');
+      const qualified = sum(data, 'qualified');
+      const meetings = sum(data, 'meetingsDone');
+      const proposals = sum(data, 'proposals');
+      const sales = sum(data, 'sales');
+      
+      // Funnel Chart
+      if (charts.funnel) charts.funnel.destroy();
+      charts.funnel = new Chart(document.getElementById('chartFunnel'), {
+        type: 'bar',
+        data: {
+          labels: ['Leads', 'Qualificados', 'Reuniões', 'Propostas', 'Vendas'],
+          datasets: [{
+            data: [leads, qualified, meetings, proposals, sales],
+            backgroundColor: [
+              'rgba(99, 102, 241, 0.8)',
+              'rgba(139, 92, 246, 0.8)',
+              'rgba(236, 72, 153, 0.8)',
+              'rgba(245, 158, 11, 0.8)',
+              'rgba(16, 185, 129, 0.8)'
+            ],
+            borderRadius: 8,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              titleFont: { size: 14, weight: 'bold' },
+              bodyFont: { size: 13 },
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              callbacks: {
+                label: (context) => {
+                  const value = context.parsed.x;
+                  const percent = leads > 0 ? ((value / leads) * 100).toFixed(1) : 0;
+                  return `${value.toLocaleString('pt-BR')} (${percent}%)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8' }
+            }
+          }
+        }
+      });
+      
+      // By Funnel Chart
+      const byFunnel = groupBy(data, 'funnel');
+      const funnels = Object.keys(byFunnel);
+      
+      if (charts.byFunnel) charts.byFunnel.destroy();
+      charts.byFunnel = new Chart(document.getElementById('chartByFunnel'), {
+        type: 'doughnut',
+        data: {
+          labels: funnels.map(f => f.charAt(0).toUpperCase() + f.slice(1)),
+          datasets: [{
+            data: funnels.map(f => sum(byFunnel[f], 'leads')),
+            backgroundColor: ['rgba(99, 102, 241, 0.8)', 'rgba(236, 72, 153, 0.8)'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: 'bottom',
+              labels: { 
+                color: '#94a3b8',
+                padding: 15,
+                usePointStyle: true,
+                font: { size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1
+            }
+          }
+        }
+      });
+      
+      // SDR Performance
+      const bySDR = groupBy(data.filter(r => r.sdr), 'sdr');
+      const sdrs = Object.keys(bySDR);
+      
+      if (sdrs.length > 0) {
+        if (charts.sdr) charts.sdr.destroy();
+        charts.sdr = new Chart(document.getElementById('chartSDR'), {
+          type: 'bar',
+          data: {
+            labels: sdrs,
+            datasets: [
+              {
+                label: 'Leads',
+                data: sdrs.map(s => sum(bySDR[s], 'leads')),
+                backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                borderRadius: 6
+              },
+              {
+                label: 'Qualificados',
+                data: sdrs.map(s => sum(bySDR[s], 'qualified')),
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                position: 'bottom',
+                labels: { color: '#94a3b8', padding: 15, usePointStyle: true }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                padding: 12,
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1
+              }
+            },
+            scales: {
+              y: { 
+                beginAtZero: true,
+                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                ticks: { color: '#94a3b8' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: '#94a3b8' }
+              }
+            }
+          }
+        });
+      }
+      
+      // MRR by Seller
+      const bySeller = groupBy(data, 'seller');
+      const sellers = Object.keys(bySeller);
+      
+      if (charts.mrr) charts.mrr.destroy();
+      charts.mrr = new Chart(document.getElementById('chartMRR'), {
+        type: 'bar',
+        data: {
+          labels: sellers,
+          datasets: [{
+            label: 'MRR (R$)',
+            data: sellers.map(s => sum(bySeller[s], 'mrr')),
+            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              callbacks: {
+                label: (context) => `R$ ${context.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            y: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { 
+                color: '#94a3b8',
+                callback: (value) => `R$ ${value.toLocaleString('pt-BR')}`
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8' }
+            }
+          }
+        }
+      });
+
+  // Goal Progress Chart - Meta vs Realizado por Vendedor
+  const bySellerGoal = groupBy(data, 'seller');
+  const sellersGoal = Object.keys(bySellerGoal).filter(s => s);
+
+  if (sellersGoal.length > 0) {
+    const sellersMRR = sellersGoal.map(s => sum(bySellerGoal[s], 'mrr'));
+    const sellersGoals = sellersGoal.map(s => goalsData.sellers[s] || 0);
+    const sellersPercentage = sellersGoal.map((s, i) => {
+      const goal = goalsData.sellers[s] || 0;
+      if (goal === 0) return 0;
+      return Math.round((sellersMRR[i] / goal) * 100);
+    });
+
+    if (charts.goalProgress) charts.goalProgress.destroy();
+
+    charts.goalProgress = new Chart(document.getElementById('chartGoalProgress'), {
+      type: 'bar',
+      data: {
+        labels: sellersGoal,
+        datasets: [
+          {
+            label: 'Meta (R$)',
+            data: sellersGoals,
+            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+            borderColor: 'rgba(245, 158, 11, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+            order: 2
+          },
+          {
+            label: 'Realizado (R$)',
+            data: sellersMRR,
+            backgroundColor: sellersGoal.map((s, i) => {
+              const percentage = sellersPercentage[i];
+              if (percentage >= 100) return 'rgba(16, 185, 129, 0.8)';
+              if (percentage >= 70) return 'rgba(245, 158, 11, 0.8)';
+              return 'rgba(239, 68, 68, 0.8)';
+            }),
+            borderWidth: 2,
+            borderRadius: 8,
+            order: 1
+          },
+          {
+            label: '% da Meta',
+            data: sellersPercentage,
+            type: 'line',
+            borderColor: 'rgb(99, 102, 241)',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderWidth: 3,
+            fill: false,
+            tension: 0.4,
+            yAxisID: 'y1',
+            pointRadius: 6,
+            pointBackgroundColor: 'rgb(99, 102, 241)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            order: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: { top: 10, bottom: 10, left: 10, right: 10 }
+        },
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'center',
+            labels: {
+              color: '#94a3b8',
+              padding: 15,
+              usePointStyle: true,
+              font: { size: 12, weight: 600 },
+              boxWidth: 12,
+              boxHeight: 12
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            padding: 14,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 12 },
+            borderColor: 'rgba(99, 102, 241, 0.5)',
+            borderWidth: 2,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                if (context.dataset.type === 'line') {
+                  label += context.parsed.y + '%';
+                } else {
+                  label += 'R$ ' + context.parsed.y.toLocaleString('pt-BR', { 
+                    minimumFractionDigits: 2 
+                  });
+                }
+                return label;
+              },
+              afterLabel: function(context) {
+                if (context.datasetIndex === 1) {
+                  const idx = context.dataIndex;
+                  const pct = sellersPercentage[idx];
+                  if (pct >= 100) {
+                    return '🎯 Meta batida! +' + (pct - 100) + '%';
+                  } else {
+                    return '⚠️ Faltam ' + (100 - pct) + '% para a meta';
+                  }
+                }
+                return '';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'left',
+            beginAtZero: true,
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: {
+              color: '#94a3b8',
+              callback: function(value) {
+                if (value >= 1000) return 'R$ ' + (value/1000).toFixed(1) + 'k';
+                return 'R$ ' + value;
+              }
+            },
+            title: {
+              display: true,
+              text: 'Valor (MRR)',
+              color: '#cbd5e1',
+              font: { size: 12, weight: 600 }
+            }
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            beginAtZero: true,
+            max: Math.max(150, ...sellersPercentage) + 10,
+            grid: { display: false },
+            ticks: {
+              color: 'rgb(99, 102, 241)',
+              callback: function(value) { return value + '%'; }
+            },
+            title: {
+              display: true,
+              text: '% da Meta',
+              color: 'rgb(99, 102, 241)',
+              font: { size: 12, weight: 600 }
+            }
+          },
+          x: {
+            grid: { display: false },
+            ticks: {
+              color: '#94a3b8',
+              font: { size: 11, weight: 600 }
+            }
+          }
+        }
+      }
+    });
+  }
+
+      
+      // Evolution Chart
+      const normalizedData = data.map(item => {
+        let dateStr = item.date.trim();
+        
+        // Remover nome do dia da semana se existir
+        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+        dayNames.forEach(day => {
+          if (dateStr.startsWith(day)) {
+            dateStr = dateStr.substring(day.length).trim();
+          }
+        });
+        
+        // Tentar extrair data válida
+        let dateObj = null;
+        
+        // Parse direto
+        try {
+          const parsed = new Date(item.date);
+          if (!isNaN(parsed.getTime())) {
+            dateObj = parsed;
+          }
+        } catch (e) {}
+        
+        // Formatos específicos
+        if (!dateObj) {
+          // DD/MM/YYYY
+          const ddmmyyyyMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+          if (ddmmyyyyMatch) {
+            const [_, day, month, year] = ddmmyyyyMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+          
+          // YYYY-MM-DD
+          const yyyymmddMatch = dateStr.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (yyyymmddMatch && !dateObj) {
+            const [_, year, month, day] = yyyymmddMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+          
+          // DD-MM-YYYY
+          const ddmmyyyyDashMatch = dateStr.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+          if (ddmmyyyyDashMatch && !dateObj) {
+            const [_, day, month, year] = ddmmyyyyDashMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+        }
+        
+        // Gerar chave de data limpa
+        let dateClean = dateStr;
+        if (dateObj && !isNaN(dateObj.getTime())) {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          dateClean = `${year}-${month}-${day}`;
+        }
+        
+        return {
+          ...item,
+          dateClean: dateClean,
+          dateObj: dateObj
+        };
+      });
+      
+      const byDate = groupBy(normalizedData, 'dateClean');
+      const dates = Object.keys(byDate).sort();
+      const dailySales = dates.map(d => sum(byDate[d], 'sales'));
+      const dailyLeads = dates.map(d => sum(byDate[d], 'leads'));
+      
+      if (charts.evolution) charts.evolution.destroy();
+      charts.evolution = new Chart(document.getElementById('chartEvolution'), {
+        type: 'line',
+        data: {
+          labels: dates.map(d => {
+            // Converter YYYY-MM-DD para DD/MM
+            if (d.match(/^\d{4}-\d{2}-\d{2}$/)) {
+              const [year, month, day] = d.split('-');
+              return `${day}/${month}`;
+            }
+            // Fallback para outros formatos
+            const parts = d.split('-');
+            if (parts.length === 3 && parts[0].length === 4) {
+              return `${parts[2]}/${parts[1]}`;
+            }
+            return d;
+          }),
+          datasets: [
+            {
+              label: 'Leads',
+              data: dailyLeads,
+              borderColor: 'rgb(99, 102, 241)',
+              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 3
+            },
+            {
+              label: 'Vendas',
+              data: dailySales,
+              borderColor: 'rgb(16, 185, 129)',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4,
+              fill: true,
+              borderWidth: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: { 
+              position: 'bottom',
+              labels: {
+                color: '#94a3b8',
+                padding: 15,
+                usePointStyle: true,
+                font: { size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              padding: 12,
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { 
+                color: '#94a3b8',
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          }
+        }
+      });
+      
+      // Monthly Comparison Chart - VERSÃO MELHORADA
+      console.log('Criando gráfico mensal com', normalizedData.length, 'registros');
+      
+      const monthlyData = {};
+      let hasRealData = false;
+      
+      // Processar dados agrupando por mês
+      normalizedData.forEach(item => {
+        let dateStr = item.dateClean.trim();
+        let monthKey;
+        
+        console.log('Processando data original:', item.date);
+        console.log('Data limpa:', dateStr);
+        
+        // Remover nome do dia da semana se existir (Mon, Tue, Wed, Thu, Fri, Sat, Sun)
+        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+        dayNames.forEach(day => {
+          if (dateStr.startsWith(day)) {
+            dateStr = dateStr.substring(day.length).trim();
+          }
+        });
+        
+        console.log('Data após remover dia da semana:', dateStr);
+        
+        // Tentar converter string de data para objeto Date
+        let dateObj = null;
+        
+        // Tentar parse direto (funciona com ISO e alguns formatos)
+        try {
+          const parsed = new Date(item.date);
+          if (!isNaN(parsed.getTime())) {
+            dateObj = parsed;
+            console.log('Data parseada diretamente:', dateObj);
+          }
+        } catch (e) {
+          console.log('Parse direto falhou');
+        }
+        
+        // Se não conseguiu parsear, tentar formatos específicos
+        if (!dateObj) {
+          // Formato DD/MM/YYYY
+          const ddmmyyyyMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+          if (ddmmyyyyMatch) {
+            const [_, day, month, year] = ddmmyyyyMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            console.log('Data no formato DD/MM/YYYY:', dateObj);
+          }
+          
+          // Formato YYYY-MM-DD
+          const yyyymmddMatch = dateStr.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (yyyymmddMatch && !dateObj) {
+            const [_, year, month, day] = yyyymmddMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            console.log('Data no formato YYYY-MM-DD:', dateObj);
+          }
+          
+          // Formato DD-MM-YYYY
+          const ddmmyyyyDashMatch = dateStr.match(/(\d{1,2})-(\d{1,2})-(\d{4})/);
+          if (ddmmyyyyDashMatch && !dateObj) {
+            const [_, day, month, year] = ddmmyyyyDashMatch;
+            dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            console.log('Data no formato DD-MM-YYYY:', dateObj);
+          }
+        }
+        
+        // Se conseguiu criar um objeto Date válido, extrair ano-mês
+        if (dateObj && !isNaN(dateObj.getTime())) {
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          monthKey = `${year}-${month}`;
+          console.log('Mês extraído de Date object:', monthKey);
+        } else {
+          // Fallback: tentar extrair mês da string diretamente
+          console.log('Tentando fallback para extrair mês da string');
+          
+          if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+              if (parts[0].length === 4) {
+                monthKey = `${parts[0]}-${parts[1].padStart(2, '0')}`;
+              } else {
+                monthKey = `${parts[2]}-${parts[1].padStart(2, '0')}`;
+              }
+            }
+          } else if (dateStr.includes('/')) {
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+              if (parts[2].length === 4) {
+                monthKey = `${parts[2]}-${parts[1].padStart(2, '0')}`;
+              } else if (parts[0].length === 4) {
+                monthKey = `${parts[0]}-${parts[1].padStart(2, '0')}`;
+              }
+            }
+          }
+        }
+        
+        if (!monthKey) {
+          console.warn('❌ Não foi possível extrair mês da data:', item.date, '→', dateStr);
+          return;
+        }
+        
+        console.log('✅ Mês extraído:', monthKey);
+        
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = {
+            leads: 0,
+            qualified: 0,
+            meetings: 0,
+            proposals: 0,
+            sales: 0,
+            mrr: 0,
+            count: 0
+          };
+        }
+        
+        monthlyData[monthKey].leads += item.leads || 0;
+        monthlyData[monthKey].qualified += item.qualified || 0;
+        monthlyData[monthKey].meetings += item.meetingsDone || 0;
+        monthlyData[monthKey].proposals += item.proposals || 0;
+        monthlyData[monthKey].sales += item.sales || 0;
+        monthlyData[monthKey].mrr += item.mrr || 0;
+        monthlyData[monthKey].count += 1;
+        
+        if (item.leads > 0 || item.sales > 0) hasRealData = true;
+      });
+      
+      console.log('Dados mensais processados:', monthlyData);
+      console.log('Tem dados reais:', hasRealData);
+      
+      // Usar apenas os meses que TÊM dados
+      let months = Object.keys(monthlyData).sort();
+      
+      // Se não há meses, algo está muito errado
+      if (months.length === 0) {
+        console.error('ERRO: Nenhum mês foi processado!');
+        return; // Não criar o gráfico
+      }
+      
+      console.log('Total de meses com dados:', months.length);
+      
+      // Criar labels formatados
+      const monthLabels = months.map(m => {
+        const [year, month] = m.split('-');
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        return `${monthNames[parseInt(month) - 1]}/${year}`;
+      });
+      
+      console.log('Meses a exibir:', months);
+      console.log('Labels:', monthLabels);
+      
+      // Armazenar dados para uso nos tooltips
+      monthlyChartData = {
+        months: months,
+        data: monthlyData
+      };
+      
+      console.log('monthlyChartData armazenado:', monthlyChartData);
+      console.log('Exemplo - primeiro mês:', monthlyChartData.months[0], monthlyChartData.data[monthlyChartData.months[0]]);
+      console.log('Exemplo - último mês:', monthlyChartData.months[monthlyChartData.months.length-1], monthlyChartData.data[monthlyChartData.months[monthlyChartData.months.length-1]]);
+      
+      // Preparar dados para o gráfico
+      const leadsData = months.map(m => monthlyData[m].leads);
+      const qualifiedData = months.map(m => monthlyData[m].qualified);
+      const meetingsData = months.map(m => monthlyData[m].meetings);
+      const proposalsData = months.map(m => monthlyData[m].proposals);
+      const salesData = months.map(m => monthlyData[m].sales);
+      const mrrData = months.map(m => monthlyData[m].mrr);
+      
+      console.log('Leads por mês:', leadsData);
+      console.log('Vendas por mês:', salesData);
+      console.log('MRR por mês:', mrrData);
+      
+      if (charts.monthlyComparison) charts.monthlyComparison.destroy();
+      charts.monthlyComparison = new Chart(document.getElementById('chartMonthlyComparison'), {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [
+            {
+              label: 'Leads',
+              data: leadsData,
+              backgroundColor: 'rgba(99, 102, 241, 0.85)',
+              borderColor: 'rgba(99, 102, 241, 1)',
+              borderWidth: 1,
+              borderRadius: 8,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Qualificados',
+              data: qualifiedData,
+              backgroundColor: 'rgba(139, 92, 246, 0.85)',
+              borderColor: 'rgba(139, 92, 246, 1)',
+              borderWidth: 1,
+              borderRadius: 8,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Reuniões',
+              data: meetingsData,
+              backgroundColor: 'rgba(236, 72, 153, 0.85)',
+              borderColor: 'rgba(236, 72, 153, 1)',
+              borderWidth: 1,
+              borderRadius: 8,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Propostas',
+              data: proposalsData,
+              backgroundColor: 'rgba(245, 158, 11, 0.85)',
+              borderColor: 'rgba(245, 158, 11, 1)',
+              borderWidth: 1,
+              borderRadius: 8,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Vendas',
+              data: salesData,
+              backgroundColor: 'rgba(16, 185, 129, 0.85)',
+              borderColor: 'rgba(16, 185, 129, 1)',
+              borderWidth: 1,
+              borderRadius: 8,
+              yAxisID: 'y'
+            },
+            {
+              label: 'MRR (R$)',
+              data: mrrData,
+              type: 'line',
+              backgroundColor: 'rgba(59, 130, 246, 0.2)',
+              borderColor: 'rgb(59, 130, 246)',
+              borderWidth: 4,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 8,
+              pointHoverRadius: 10,
+              pointBackgroundColor: 'rgb(59, 130, 246)',
+              pointBorderColor: '#fff',
+              pointBorderWidth: 3,
+              pointHoverBackgroundColor: 'rgb(59, 130, 246)',
+              pointHoverBorderColor: '#fff',
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+            display: true,
+            position: 'top',
+            align: 'center',
+            labels: {
+              color: '#94a3b8',
+              padding: 20,
+              usePointStyle: true,
+              font: { size: 13, weight: 600 },
+              boxWidth: 15,
+              boxHeight: 15
+            }
+          },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.98)',
+              padding: 18,
+              titleFont: { size: 15, weight: 'bold' },
+              bodyFont: { size: 13, lineHeight: 1.6 },
+              borderColor: 'rgba(99, 102, 241, 0.5)',
+              borderWidth: 2,
+              displayColors: true,
+              boxWidth: 12,
+              boxHeight: 12,
+              callbacks: {
+                title: function(context) {
+                  console.log('=== TITLE CALLBACK ===');
+                  console.log('Context:', context);
+                  console.log('Label:', context[0].label);
+                  console.log('DataIndex:', context[0].dataIndex);
+                  console.log('=====================');
+                  return context[0].label;
+                },
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  
+                  const value = context.parsed.y;
+                  if (context.dataset.label === 'MRR (R$)') {
+                    label += 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                  } else {
+                    label += value.toLocaleString('pt-BR');
+                  }
+                  
+                  // Adicionar percentual de crescimento se houver
+                  const monthIndex = context.dataIndex;
+                  if (monthIndex > 0 && value > 0) {
+                    const previousValue = context.dataset.data[monthIndex - 1];
+                    if (previousValue > 0) {
+                      const growth = ((value - previousValue) / previousValue * 100).toFixed(1);
+                      const arrow = growth > 0 ? '↗' : growth < 0 ? '↘' : '→';
+                      label += ` ${arrow} ${growth > 0 ? '+' : ''}${growth}%`;
+                    }
+                  }
+                  
+                  return label;
+                },
+                afterBody: function(context) {
+                  const monthIndex = context[0].dataIndex;
+                  
+                  console.log('=== TOOLTIP DEBUG ===');
+                  console.log('Month Index:', monthIndex);
+                  console.log('Context label:', context[0].label);
+                  console.log('monthlyChartData exists:', !!monthlyChartData);
+                  
+                  // Usar dados globais armazenados
+                  if (!monthlyChartData || !monthlyChartData.months || !monthlyChartData.data) {
+                    console.error('monthlyChartData não disponível!');
+                    return '';
+                  }
+                  
+                  console.log('All months:', monthlyChartData.months);
+                  console.log('Selected month key:', monthlyChartData.months[monthIndex]);
+                  
+                  const monthKey = monthlyChartData.months[monthIndex];
+                  const data = monthlyChartData.data[monthKey];
+                  
+                  console.log('Data for month:', data);
+                  
+                  if (!data) {
+                    console.warn('Dados não encontrados para o mês:', monthKey, 'índice:', monthIndex);
+                    return '';
+                  }
+                  
+                  const info = [];
+                  
+                  if (data.count > 0) {
+                    info.push(`\nTotal de registros: ${data.count}`);
+                  }
+                  
+                  if (data.leads > 0) {
+                    const qualRate = ((data.qualified / data.leads) * 100).toFixed(1);
+                    info.push(`Taxa de Qualificação: ${qualRate}%`);
+                  }
+                  
+                  if (data.proposals > 0) {
+                    const convRate = ((data.sales / data.proposals) * 100).toFixed(1);
+                    info.push(`Taxa de Conversão: ${convRate}%`);
+                  }
+                  
+                  if (data.meetings > 0 && data.leads > 0) {
+                    const meetRate = ((data.meetings / data.leads) * 100).toFixed(1);
+                    info.push(`Taxa Reunião/Lead: ${meetRate}%`);
+                  }
+                  
+                  console.log('Info to display:', info);
+                  console.log('===================');
+                  
+                  return info.join('\n');
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              beginAtZero: true,
+              grid: { 
+                color: 'rgba(255, 255, 255, 0.06)',
+                drawBorder: false,
+                lineWidth: 1
+              },
+              ticks: { 
+                color: '#94a3b8',
+                font: { size: 12, weight: '500' },
+                padding: 8,
+                callback: (value) => value.toLocaleString('pt-BR')
+              },
+              title: {
+                display: true,
+                text: 'Volume (Quantidade)',
+                color: '#cbd5e1',
+                font: { size: 14, weight: '700' },
+                padding: { top: 10, bottom: 10 }
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              beginAtZero: true,
+              grid: { display: false },
+              ticks: { 
+                color: 'rgb(59, 130, 246)',
+                font: { size: 12, weight: '600' },
+                padding: 8,
+                callback: (value) => {
+                  if (value >= 1000) {
+                    return 'R$ ' + (value / 1000).toFixed(1) + 'k';
+                  }
+                  return 'R$ ' + value.toFixed(0);
+                }
+              },
+              title: {
+                display: true,
+                text: 'MRR (Receita Recorrente)',
+                color: 'rgb(59, 130, 246)',
+                font: { size: 14, weight: '700' },
+                padding: { top: 10, bottom: 10 }
+              }
+            },
+            x: {
+              grid: { 
+                display: false,
+                drawBorder: false
+              },
+              ticks: { 
+                color: '#94a3b8',
+                font: { size: 12, weight: '600' },
+                maxRotation: 0,
+                minRotation: 0,
+                padding: 10
+              }
+            }
+          }
+        }
+      });
+      
+      console.log('Gráfico mensal criado com sucesso');
+    }
+    
+    // CREATE TABLE
+    function createPerformanceTable(data) {
+      const tbody = document.getElementById('performanceTableBody');
+      tbody.innerHTML = '';
+      
+      const grouped = {};
+      data.forEach(r => {
+        const key = `${r.sdr || 'Sem SDR'}-${r.seller}-${r.funnel}`;
+        if (!grouped[key]) {
+          grouped[key] = {
+            sdr: r.sdr || 'Sem SDR',
+            seller: r.seller,
+            funnel: r.funnel,
+            leads: 0,
+            qualified: 0,
+            meetingsDone: 0,
+            meetingsSet: 0,
+            proposals: 0,
+            sales: 0,
+            mrr: 0
+          };
+        }
+        grouped[key].leads += r.leads;
+        grouped[key].qualified += r.qualified;
+        grouped[key].meetingsDone += r.meetingsDone;
+        grouped[key].meetingsSet += r.meetingsSet;
+        grouped[key].proposals += r.proposals;
+        grouped[key].sales += r.sales;
+        grouped[key].mrr += r.mrr;
+      });
+      
+      Object.values(grouped).forEach(row => {
+        const qualRate = rate(row.qualified, row.leads);
+        const convRate = rate(row.sales, row.proposals);
+        
+        let performance = 'badge-warning';
+        let perfText = 'Média';
+        
+        if (parseFloat(convRate) > 30 && parseFloat(qualRate) > 35) {
+          performance = 'badge-success';
+          perfText = 'Excelente';
+        } else if (parseFloat(convRate) > 20 && parseFloat(qualRate) > 25) {
+          performance = 'badge-success';
+          perfText = 'Boa';
+        } else if (parseFloat(convRate) < 15 || parseFloat(qualRate) < 20) {
+          performance = 'badge-danger';
+          perfText = 'Baixa';
+        }
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${row.sdr}</strong></td>
+          <td><strong>${row.seller}</strong></td>
+          <td>${row.funnel}</td>
+          <td>${row.leads}</td>
+          <td>${row.qualified}</td>
+          <td>${qualRate}%</td>
+          <td>${row.meetingsDone}</td>
+          <td>${row.proposals}</td>
+          <td><strong>${row.sales}</strong></td>
+          <td>${convRate}%</td>
+          <td><strong>R$ ${row.mrr.toLocaleString('pt-BR')}</strong></td>
+          <td><span class="badge ${performance}">${perfText}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    
+    // POPULATE SELECTS
+    function populateSellers(data) {
+      const select = document.getElementById('sellerFilter');
+      const sellers = [...new Set(data.map(r => r.seller))].filter(s => s);
+      
+      select.innerHTML = '<option value="todos">Todos os vendedores</option>';
+      sellers.forEach(seller => {
+        const option = document.createElement('option');
+        option.value = seller;
+        option.textContent = seller;
+        select.appendChild(option);
+      });
+    }
+    
+    function populateSDRs(data) {
+      const select = document.getElementById('sdrFilter');
+      const sdrs = [...new Set(data.map(r => r.sdr).filter(s => s))];
+      
+      select.innerHTML = '<option value="todos">Todos os SDRs</option>';
+      sdrs.forEach(sdr => {
+        const option = document.createElement('option');
+        option.value = sdr;
+        option.textContent = sdr;
+        select.appendChild(option);
+      });
+    }
+    
+    // UPDATE DASHBOARD
+    async function updateDashboard() {
+      const filtered = filterData(allData);
+      
+      createKPIs(filtered);
+      createTopPerformers(filtered);
+      createInsights(filtered);
+      createCharts(filtered);
+      createPerformanceTable(filtered);
+      
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('pt-BR');
+      const dateStr = now.toLocaleDateString('pt-BR');
+      document.getElementById('lastUpdate').textContent = 
+        `Última atualização: ${dateStr} às ${timeStr}`;
+    }
+    
+    // THEME TOGGLE
+    function toggleTheme() {
+      const body = document.body;
+      const themeBtn = document.querySelector('.theme-toggle');
+      
+      body.classList.toggle('light-theme');
+      
+      // Atualizar o ícone e texto do botão
+      if (body.classList.contains('light-theme')) {
+        themeBtn.innerHTML = '☀️ Tema';
+        localStorage.setItem('theme', 'light');
+      } else {
+        themeBtn.innerHTML = '🌙 Tema';
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      // Recriar os gráficos com as novas cores
+      if (typeof updateDashboard === 'function') {
+        updateDashboard();
+      }
+    }
+    
+    // Carregar tema salvo ao inicializar
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeBtn = document.querySelector('.theme-toggle');
+      
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        if (themeBtn) themeBtn.innerHTML = '☀️ Tema';
+      }
+    }
+    
+    // FULLSCREEN
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    // EXPORT
+    function exportData() {
+      window.print();
+    }
+    
+    // OPEN TEAM MANAGEMENT
+    function openTeamManagement() {
+      // Tentar abrir em nova aba
+      const newWindow = window.open('gestao_equipe_comercial.html', '_blank');
+      
+      // Se bloqueado, tentar mesma aba
+      if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+        window.location.href = 'gestao_equipe_comercial.html';
+      }
+    }
+    
+    // INIT
+    async function init() {
+      try {
+        console.log('Inicializando dashboard...');
+        
+        // Carregar tema salvo
+        loadSavedTheme();
+        
+        // Configurar datas padrão nos filtros
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        // Formatar datas para YYYY-MM-DD (formato aceito pelo input type="date")
+        const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        // Definir data inicial como primeiro dia do mês atual
+        document.getElementById('startDate').value = formatDate(firstDayOfMonth);
+        // Definir data final como hoje
+        document.getElementById('endDate').value = formatDate(today);
+        
+        console.log('Datas padrão configuradas:', {
+          inicio: formatDate(firstDayOfMonth),
+          fim: formatDate(today)
+        });
+        
+        // Buscar dados
+        allData = await fetchData();
+        console.log('allData carregado:', allData.length, 'registros');
+        
+        // Popular filtros
+        populateSellers(allData);
+        populateSDRs(allData);
+        
+        // Atualizar dashboard
+        await updateDashboard();
+        
+        // Esconder loading
+        document.getElementById('loadingOverlay').style.display = 'none';
+        console.log('Dashboard carregado com sucesso!');
+        
+        // Adicionar event listeners
+        document.getElementById('applyFilters').addEventListener('click', updateDashboard);
+        
+        document.getElementById('refreshData').addEventListener('click', async function() {
+          const btn = this;
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '⏳ Atualizando...';
+          btn.disabled = true;
+          
+          try {
+            allData = await fetchData();
+            populateSellers(allData);
+            populateSDRs(allData);
+            await updateDashboard();
+            
+            btn.innerHTML = '✅ Atualizado!';
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 2000);
+          } catch(error) {
+            console.error('Erro ao atualizar:', error);
+            btn.innerHTML = '❌ Erro';
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 2000);
+          }
+        });
+      } catch(error) {
+        console.error('Erro fatal ao inicializar dashboard:', error);
+        
+        // Mesmo com erro, tentar esconder o loading
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+          loadingOverlay.style.display = 'none';
+        }
+        
+        // Mostrar mensagem de erro
+        alert('Erro ao carregar o dashboard. Por favor, verifique o console (F12) para mais detalhes.\n\nErro: ' + error.message);
+      }
+    }
+    
+    init();
+  </script>
+
+  <!-- Modal de Metas -->
+  <div id="goalsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; backdrop-filter: blur(5px);">
+    <div style="background: var(--glass-bg); backdrop-filter: blur(20px); margin: 3% auto; padding: 0; border: 1px solid var(--glass-border); border-radius: 24px; width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto;">
+      <div style="padding: 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🎯 Configurar Metas</h2>
+        <span onclick="closeGoalsModal()" style="color: var(--text-secondary); font-size: 2rem; cursor: pointer;">&times;</span>
+      </div>
+      <div style="padding: 2rem;">
+        <h3 style="margin-bottom: 1rem;">Meta da Empresa</h3>
+        <input type="number" id="companyGoalInput" placeholder="Ex: 100000" style="width: 100%; padding: 0.875rem; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 1rem; font-weight: 600; margin-bottom: 2rem;">
+        
+        <h3 style="margin-bottom: 1rem;">Metas Individuais</h3>
+        <div id="sellersGoalsList" style="display: flex; flex-direction: column; gap: 1rem; max-height: 400px; overflow-y: auto;"></div>
+        
+        <button onclick="saveGoalsFromModal()" style="width: 100%; padding: 1rem; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1.1rem; cursor: pointer; margin-top: 2rem;">
+          💾 Salvar Metas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openGoalsModal() {
+      const sellers = [...new Set(allData.map(r => r.seller))].filter(s => s).sort();
+      const container = document.getElementById('sellersGoalsList');
+      container.innerHTML = '';
+      
+      if (sellers.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-secondary);">Carregue os dados primeiro</p>';
+      } else {
+        sellers.forEach(seller => {
+          const currentGoal = goalsData.sellers[seller] || 0;
+          const div = document.createElement('div');
+          div.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; padding: 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);';
+          div.innerHTML = `
+            <span style="font-weight: 600; color: var(--text-primary);">${seller}</span>
+            <input type="number" data-seller="${seller}" value="${currentGoal}" placeholder="Meta" style="padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-weight: 600;">
+          `;
+          container.appendChild(div);
+        });
+      }
+      
+      document.getElementById('companyGoalInput').value = goalsData.company || 0;
+      document.getElementById('goalsModal').style.display = 'block';
+    }
+    
+    function closeGoalsModal() {
+      document.getElementById('goalsModal').style.display = 'none';
+    }
+    
+    function saveGoalsFromModal() {
+      goalsData.company = parseFloat(document.getElementById('companyGoalInput').value) || 0;
+      
+      const inputs = document.querySelectorAll('#sellersGoalsList input');
+      inputs.forEach(input => {
+        const seller = input.dataset.seller;
+        const goal = parseFloat(input.value) || 0;
+        if (goal > 0) goalsData.sellers[seller] = goal;
+      });
+      
+      saveGoals();
+      closeGoalsModal();
+      updateDashboard();
+      alert('✅ Metas salvas!');
+    }
+    
+    window.addEventListener('click', function(event) {
+      if (event.target.id === 'goalsModal') closeGoalsModal();
+    });
+  </script>
+
+</body>
+</html>
